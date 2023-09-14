@@ -17,7 +17,7 @@ class IP_Calculator:
         self.ip_address = ip
         self.prefix = None
         self.netmask = None
-        self.
+        self.wildcard = None
         self.bin_ip_address = None
         self.bordered_ip_address = None
         self.bin_netmask = None
@@ -46,9 +46,14 @@ class IP_Calculator:
         return dec_ip
 
     @staticmethod
-    def border(ip, prefix, number_after_border='0', direction='right'):
+    def border(ip, prefix, number='0'):
         sus = ip.replace('.', '')
-        sus = sus[:prefix].ljust(32, number_after_border)
+        sus = sus[:prefix].ljust(32, number)
+        return f'{sus[:8]}.{sus[8:16]}.{sus[16:24]}.{sus[24:32]}'
+
+    @staticmethod
+    def wildcard_create(prefix):
+        sus = f'{prefix*"0"}' + f'{(32-prefix)*"1"}'
         return f'{sus[:8]}.{sus[8:16]}.{sus[16:24]}.{sus[24:32]}'
 
     @staticmethod
@@ -88,11 +93,10 @@ class IP_Calculator:
         else:
             hmax[3] = str(int(hmax[3]) - 1)
 
-        if network == broadcast:          # pervyi kostyl'
+        if network == broadcast:    # pervyi kostyl'
             hmin, hmax = hmax, hmin
 
         return ".".join(hmin), ".".join(hmax)
-
 
     @staticmethod
     def host_counter(prefix):
@@ -100,7 +104,6 @@ class IP_Calculator:
             return 0
         else:
             return (2**(32-prefix))-2
-
 
     def prettyprint(self, array, columns, separators='  ', welcome=None):
         if welcome:
@@ -119,6 +122,7 @@ class IP_Calculator:
         self.prettyprint(self.masks, 3, separators=' | ', welcome='Выберете и введите префикс:')
         self.prefix = int(input('Ваш выбор: '))
         self.netmask = self.masks[self.prefix][1]
+        self.wildcard = self.ip_dec(self.wildcard_create(self.prefix))
         self.bin_ip_address = self.ip_bin(self.ip_address)
         self.bin_netmask = self.ip_bin(self.netmask)
         self.network = self.ip_dec(self.border(self.bin_ip_address, self.prefix))
@@ -132,6 +136,7 @@ class IP_Calculator:
               f'\nIP: {self.ip_address}'
               f'\nПрефикс: {self.prefix}'
               f'\nМаска: {self.netmask}'
+              f'\nОбратная маска: {self.wildcard}'
               f'\nНомер сети: {self.network}'
               f'\nШироковещательный IP-адрес: {self.broadcast}'
               f'\nIP адрес первого хоста: {self.hostmin}'
