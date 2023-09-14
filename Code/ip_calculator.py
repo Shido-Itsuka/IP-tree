@@ -21,6 +21,11 @@ class IP_Calculator:
         self.bin_ip_address = None
         self.bordered_ip_address = None
         self.bin_netmask = None
+        self.bin_wildcard = None
+        self.bin_network = None
+        self.bin_broadcast = None
+        self.bin_hostmin = None
+        self.bin_hostmax = None
         self.network = None
         self.broadcast = None
         self.hostmin = None
@@ -53,7 +58,7 @@ class IP_Calculator:
 
     @staticmethod
     def wildcard_create(prefix):
-        sus = f'{prefix*"0"}' + f'{(32-prefix)*"1"}'
+        sus = f'{prefix * "0"}' + f'{(32 - prefix) * "1"}'
         return f'{sus[:8]}.{sus[8:16]}.{sus[16:24]}.{sus[24:32]}'
 
     @staticmethod
@@ -93,7 +98,7 @@ class IP_Calculator:
         else:
             hmax[3] = str(int(hmax[3]) - 1)
 
-        if network == broadcast:    # pervyi kostyl'
+        if network == broadcast:  # pervyi kostyl'
             hmin, hmax = hmax, hmin
 
         return ".".join(hmin), ".".join(hmax)
@@ -103,7 +108,7 @@ class IP_Calculator:
         if prefix == 32:
             return 0
         else:
-            return (2**(32-prefix))-2
+            return (2 ** (32 - prefix)) - 2
 
     def prettyprint(self, array, columns, separators='  ', welcome=None):
         if welcome:
@@ -119,8 +124,8 @@ class IP_Calculator:
             print()
 
     def main(self):
-        self.prettyprint(self.masks, 3, separators=' | ', welcome='Выберете и введите префикс:')
-        self.prefix = int(input('Ваш выбор: '))
+        self.prettyprint(self.masks, 3, separators=' | ')
+        self.prefix = int(input('Введите префикс маски из вышеперечисленных: '))
         self.netmask = self.masks[self.prefix][1]
         self.wildcard = self.ip_dec(self.wildcard_create(self.prefix))
         self.bin_ip_address = self.ip_bin(self.ip_address)
@@ -129,6 +134,12 @@ class IP_Calculator:
         self.broadcast = self.ip_dec(self.border(self.bin_ip_address, self.prefix, '1'))
         self.hostmin, self.hostmax = self.hmin_hmax(self.network, self.broadcast)
         self.hosts = self.host_counter(self.prefix)
+        self.bin_wildcard = self.ip_bin(self.wildcard)
+        self.bin_network = self.ip_bin(self.network)
+        self.bin_broadcast = self.ip_bin(self.broadcast)
+        self.bin_hostmin = self.ip_bin(self.hostmin)
+        self.bin_hostmax = self.ip_bin(self.hostmax)
+
         self.output()
 
     def output(self):
@@ -144,8 +155,15 @@ class IP_Calculator:
               f'\nКоличество хостов: {self.hosts}'
               f'\nIP в бинарном виде: {self.bin_ip_address}'
               f'\nМаска в бинарном виде: {self.bin_netmask}'
+              f'\nОбратная маска в бинарном виде: {self.bin_wildcard}'
+              f'\nНомер сети в бинарном виде: {self.bin_network}'
+              f'\nШироковещательный IP-адрес в бинарном виде: {self.bin_broadcast}'
+              f'\nIP адрес первого хоста в бинарном виде: {self.bin_hostmin}'
+              f'\nIP адрес последнего хоста в бинарном виде: {self.bin_hostmax}'
+
+
               f'\n{66 * "-"}')
 
 
-c1 = IP_Calculator('192.168.1.255')
+c1 = IP_Calculator(input('Введите IP-адрес: '))
 c1.main()
