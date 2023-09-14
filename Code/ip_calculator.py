@@ -17,6 +17,7 @@ class IP_Calculator:
         self.ip_address = ip
         self.prefix = None
         self.netmask = None
+        self.
         self.bin_ip_address = None
         self.bordered_ip_address = None
         self.bin_netmask = None
@@ -45,22 +46,61 @@ class IP_Calculator:
         return dec_ip
 
     @staticmethod
-    def border(ip, prefix, number_after_border='0'):
+    def border(ip, prefix, number_after_border='0', direction='right'):
         sus = ip.replace('.', '')
         sus = sus[:prefix].ljust(32, number_after_border)
         return f'{sus[:8]}.{sus[8:16]}.{sus[16:24]}.{sus[24:32]}'
 
-    def hmin_hmax(self, network, broadcast):
-        hmin, hmax = network.split('.'), network.split('.')
-        hmin[3] = str(int(hmin[3]) + 1)
-        hmax[3] = str(int(hmax[3]) - 1)
+    @staticmethod
+    def hmin_hmax(network, broadcast):
+        hmin, hmax = network.split('.'), broadcast.split('.')
+        if hmin[3] == "255":
+            hmin[3] = "0"
+            if hmin[2] == "255":
+                hmin[2] = "0"
+                if hmin[1] == "255":
+                    hmin[1] = "0"
+                    if hmin[0] == "255":
+                        hmin[0] = "0"
+                    else:
+                        hmin[0] = str(int(hmin[0]) + 1)
+                else:
+                    hmin[1] = str(int(hmin[1]) + 1)
+            else:
+                hmin[2] = str(int(hmin[2]) + 1)
+        else:
+            hmin[3] = str(int(hmin[3]) + 1)
 
+        if hmax[3] == "0":
+            hmax[3] = "255"
+            if hmax[2] == "0":
+                hmax[2] = "255"
+                if hmax[1] == "0":
+                    hmax[1] = "255"
+                    if hmax[0] == "0":
+                        hmax[0] = "255"
+                    else:
+                        hmax[0] = str(int(hmax[0]) - 1)
+                else:
+                    hmax[1] = str(int(hmax[1]) - 1)
+            else:
+                hmax[2] = str(int(hmax[2]) - 1)
+        else:
+            hmax[3] = str(int(hmax[3]) - 1)
 
+        if network == broadcast:          # pervyi kostyl'
+            hmin, hmax = hmax, hmin
+
+        return ".".join(hmin), ".".join(hmax)
 
 
     @staticmethod
     def host_counter(prefix):
-        return (2**(32-prefix))-2
+        if prefix == 32:
+            return 0
+        else:
+            return (2**(32-prefix))-2
+
 
     def prettyprint(self, array, columns, separators='  ', welcome=None):
         if welcome:
@@ -80,11 +120,11 @@ class IP_Calculator:
         self.prefix = int(input('Ваш выбор: '))
         self.netmask = self.masks[self.prefix][1]
         self.bin_ip_address = self.ip_bin(self.ip_address)
+        self.bin_netmask = self.ip_bin(self.netmask)
         self.network = self.ip_dec(self.border(self.bin_ip_address, self.prefix))
         self.broadcast = self.ip_dec(self.border(self.bin_ip_address, self.prefix, '1'))
-        self.hostmin = None
+        self.hostmin, self.hostmax = self.hmin_hmax(self.network, self.broadcast)
         self.hosts = self.host_counter(self.prefix)
-
         self.output()
 
     def output(self):
@@ -92,15 +132,15 @@ class IP_Calculator:
               f'\nIP: {self.ip_address}'
               f'\nПрефикс: {self.prefix}'
               f'\nМаска: {self.netmask}'
-              f'\nIP в бинарном виде: {self.bin_ip_address}'
-              f'\nМаска в бинарном виде: {self.bin_netmask}'
               f'\nНомер сети: {self.network}'
               f'\nШироковещательный IP-адрес: {self.broadcast}'
               f'\nIP адрес первого хоста: {self.hostmin}'
               f'\nIP адрес последнего хоста: {self.hostmax}'
               f'\nКоличество хостов: {self.hosts}'
-              f'\n', 66 * '-')
+              f'\nIP в бинарном виде: {self.bin_ip_address}'
+              f'\nМаска в бинарном виде: {self.bin_netmask}'
+              f'\n{66 * "-"}')
 
 
-c1 = IP_Calculator('192.168.1.1')
+c1 = IP_Calculator('192.168.1.255')
 c1.main()
