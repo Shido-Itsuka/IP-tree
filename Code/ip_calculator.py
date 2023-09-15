@@ -13,8 +13,8 @@ class IP_Calculator:
         [30, "255.255.255.252"], [31, "255.255.255.254"], [32, "255.255.255.255"]
     ]
 
-    def __init__(self, ip):
-        self.ip_address = ip
+    def __init__(self):
+        self.ip_address = None
         self.prefix = None
         self.netmask = None
         self.wildcard = None
@@ -123,7 +123,25 @@ class IP_Calculator:
                     print(separators, end='')
             print()
 
+    '''@staticmethod
+    def ip_check():
+        while True:
+            ip = input('Введите IP-адрес: ')
+            if ip.count('.') == 3:
+                bites = ip.split('.')
+                for bite in bites:
+                    if bite.isdigit():
+                        if int(bite) not in range(0, 255):
+                            print('Такого IP-адреса не существует, повторите ввод.')
+                            continue
+            else:
+                print('Такого IP-адреса не существует, повторите ввод.')
+                continue
+            return ip'''
+
     def main(self):
+        self.ip_address = self.ip_check()
+
         self.prettyprint(self.masks, 3, separators=' | ')
         self.prefix = int(input('Введите префикс маски из вышеперечисленных: '))
         self.netmask = self.masks[self.prefix][1]
@@ -139,7 +157,6 @@ class IP_Calculator:
         self.bin_broadcast = self.ip_bin(self.broadcast)
         self.bin_hostmin = self.ip_bin(self.hostmin)
         self.bin_hostmax = self.ip_bin(self.hostmax)
-
         self.output()
 
     def output(self):
@@ -165,5 +182,5 @@ class IP_Calculator:
               f'\n{66 * "-"}')
 
 
-c1 = IP_Calculator(input('Введите IP-адрес: '))
+c1 = IP_Calculator()
 c1.main()
