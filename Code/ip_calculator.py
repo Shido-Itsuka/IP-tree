@@ -123,27 +123,33 @@ class IP_Calculator:
                     print(separators, end='')
             print()
 
-    '''@staticmethod
+    @staticmethod
     def ip_check():
         while True:
             ip = input('Введите IP-адрес: ')
             if ip.count('.') == 3:
                 bites = ip.split('.')
+                valid_ip = True
                 for bite in bites:
-                    if bite.isdigit():
-                        if int(bite) not in range(0, 255):
-                            print('Такого IP-адреса не существует, повторите ввод.')
-                            continue
-            else:
-                print('Такого IP-адреса не существует, повторите ввод.')
-                continue
-            return ip'''
+                    if not bite.isdigit() or int(bite) not in range(0, 256):
+                        valid_ip = False
+                        break
+                if valid_ip:
+                    return ip
+            print('Такого IP-адреса не существует, повторите ввод.')
+
+    @staticmethod
+    def prefix_check():
+        while True:
+            prefix = input('Введите префикс маски из вышеперечисленных: ')
+            if prefix.isdigit() and int(prefix) in range(0, 33):
+                return int(prefix)
+            print('Такого префикса не существует, повторите ввод.')
 
     def main(self):
         self.ip_address = self.ip_check()
-
         self.prettyprint(self.masks, 3, separators=' | ')
-        self.prefix = int(input('Введите префикс маски из вышеперечисленных: '))
+        self.prefix = self.prefix_check()
         self.netmask = self.masks[self.prefix][1]
         self.wildcard = self.ip_dec(self.wildcard_create(self.prefix))
         self.bin_ip_address = self.ip_bin(self.ip_address)
@@ -184,4 +190,3 @@ class IP_Calculator:
 
 c1 = IP_Calculator()
 c1.main()
-
