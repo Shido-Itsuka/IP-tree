@@ -1,4 +1,7 @@
 class IP_Calculator:
+
+    # A matrix consists of lists.
+    # The mask prefix is on the 1st place, and the mask itself is on the 2nd.
     masks = [
         [0, "000.000.000.000"], [1, "128.000.000.000"], [2, "192.000.000.000"],
         [3, "224.000.000.000"], [4, "240.000.000.000"], [5, "248.000.000.000"],
@@ -33,7 +36,7 @@ class IP_Calculator:
         self.hosts = None
 
     @staticmethod
-    def ip_bin(ip):
+    def ip_bin(ip) -> str:
         bites = ip.split('.')
         bin_bite = []
         for bite in bites:
@@ -42,7 +45,7 @@ class IP_Calculator:
         return bin_ip
 
     @staticmethod
-    def ip_dec(ip):
+    def ip_dec(ip) -> str:
         bites = ip.split('.')
         dec_bite = []
         for bite in bites:
@@ -51,18 +54,18 @@ class IP_Calculator:
         return dec_ip
 
     @staticmethod
-    def border(ip, prefix, number='0'):
+    def border(ip, prefix, number='0') -> str:
         sus = ip.replace('.', '')
         sus = sus[:prefix].ljust(32, number)
         return f'{sus[:8]}.{sus[8:16]}.{sus[16:24]}.{sus[24:32]}'
 
     @staticmethod
-    def wildcard_create(prefix):
+    def wildcard_create(prefix) -> str:
         sus = f'{prefix * "0"}' + f'{(32 - prefix) * "1"}'
         return f'{sus[:8]}.{sus[8:16]}.{sus[16:24]}.{sus[24:32]}'
 
     @staticmethod
-    def hmin_hmax(network, broadcast):
+    def hmin_hmax(network, broadcast) -> (str, str):
         hmin, hmax = network.split('.'), broadcast.split('.')
         if hmin[3] == "255":
             hmin[3] = "0"
@@ -104,7 +107,7 @@ class IP_Calculator:
         return ".".join(hmin), ".".join(hmax)
 
     @staticmethod
-    def host_counter(prefix):
+    def host_counter(prefix) -> int:
         if prefix == 32:
             return 0
         else:
@@ -124,7 +127,7 @@ class IP_Calculator:
             print()
 
     @staticmethod
-    def ip_check():
+    def ip_check() -> str:
         while True:
             ip = input('Введите IP-адрес: ')
             if ip.count('.') == 3:
@@ -139,7 +142,7 @@ class IP_Calculator:
             print('Такого IP-адреса не существует, повторите ввод.')
 
     @staticmethod
-    def prefix_check():
+    def prefix_check() -> int:
         while True:
             prefix = input('Введите префикс маски из вышеперечисленных: ')
             if prefix.isdigit() and int(prefix) in range(0, 33):
@@ -148,7 +151,7 @@ class IP_Calculator:
 
     def main(self):
         self.ip_address = self.ip_check()
-        self.prettyprint(self.masks, 3, separators=' | ')
+        self.prettyprint(self.masks, 3, separators=' | ', welcome=66 * '-')
         self.prefix = self.prefix_check()
         self.netmask = self.masks[self.prefix][1]
         self.wildcard = self.ip_dec(self.wildcard_create(self.prefix))
@@ -156,13 +159,19 @@ class IP_Calculator:
         self.bin_netmask = self.ip_bin(self.netmask)
         self.network = self.ip_dec(self.border(self.bin_ip_address, self.prefix))
         self.broadcast = self.ip_dec(self.border(self.bin_ip_address, self.prefix, '1'))
-        self.hostmin, self.hostmax = self.hmin_hmax(self.network, self.broadcast)
         self.hosts = self.host_counter(self.prefix)
+
+        if self.hosts == 0:
+            self.hostmin, self.hostmax = 'N/A', 'N/A'
+            self.bin_hostmin, self.bin_hostmax = 'N/A', 'N/A'
+        else:
+            self.hostmin, self.hostmax = self.hmin_hmax(self.network, self.broadcast)
+            self.bin_hostmin = self.ip_bin(self.hostmin)
+            self.bin_hostmax = self.ip_bin(self.hostmax)
+
         self.bin_wildcard = self.ip_bin(self.wildcard)
         self.bin_network = self.ip_bin(self.network)
         self.bin_broadcast = self.ip_bin(self.broadcast)
-        self.bin_hostmin = self.ip_bin(self.hostmin)
-        self.bin_hostmax = self.ip_bin(self.hostmax)
         self.output()
 
     def output(self):
@@ -185,7 +194,7 @@ class IP_Calculator:
               f'\nIP адрес последнего хоста в бинарном виде: {self.bin_hostmax}'
 
 
-              f'\n{66 * "-"}')
+              f'\n{79 * "-"}')
 
 
 c1 = IP_Calculator()
