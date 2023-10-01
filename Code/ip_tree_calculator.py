@@ -1,42 +1,36 @@
 import random
 import ip_calculator as ipc
 
-s4096 = [[4096, 0, ],
-         [4096, 1, ]]
 
-s2048 = [[2048, 0, ],
-         [2048, 1, ]]
+class IP_tree_Calculator:
 
-s1024 = [[1024, 0, ],
-         [1024, 1, ]]
+    subnets = {
+        4096: [[0, None], [1, None]],
 
-s512 = [[512, 0, ],
-        [512, 1, ]]
+        2048: [[0, None], [1, None]],
 
-s256 = [[256, 0, ],
-        [256, 1, ]]
+        1024: [[0, None], [1, None]],
 
-s128 = [[128, 0, ],
-        [128, 1, ]]
+        512: [[0, None], [1, None]],
 
-s64 = [[64, 0, ],
-       [64, 1, ]]
+        256: [[0, None], [1, None]],
 
-s32 = [[32, 0, ],
-       [32, 1, ]]
+        128: [[0, None], [1, None]],
 
-s16 = [[16, 0, ],
-       [16, 1, ]]
+        64: [[0, None], [1, None]],
 
-s8 = [[8, 0, ],
-      [8, 1, ]]
+        32: [[0, None], [1, None]],
 
-def add_value_to_matrix(value):
-    matrices = [s4096, s2048, s1024, s512, s256, s128, s64, s32, s16, s8]
-    matrix = random.choice(matrices)
-    inner_list = random.choice(matrix)
-    inner_list.append(value)
-    return matrix
+        16: [[0, None], [1, None]],
+
+        8: [[0, None], [1, None]],
+
+        4: [[0, None], [1, None]]
+    }
+
+    def __init__(self):
+        pass
+
 
 c1 = ipc.IP_Calculator()
 
