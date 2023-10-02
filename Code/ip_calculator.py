@@ -197,5 +197,6 @@ class IP_Calculator:
               f'\n{79 * "-"}')
 
 
-c1 = IP_Calculator()
-c1.main()
+if __name__ == '__main__':
+    c1 = IP_Calculator()
+    c1.main()
