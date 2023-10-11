@@ -9,7 +9,6 @@ def main(page: ft.Page) -> None:
     }
 
     page.title = 'IP-tree'
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
     page.theme_mode = ft.ThemeMode.DARK
     page.theme = ft.Theme(font_family='Raleway')
@@ -19,11 +18,30 @@ def main(page: ft.Page) -> None:
     page.window_width = 800
     page.window_height = 500
 
-    page.add(Row(
-        controls=[Text(value='Hello, world!', size=40)],
-        alignment=ft.MainAxisAlignment.CENTER
+    page.window_title_bar_hidden = True
+    page.window_title_bar_buttons_hidden = True
+    page.window_resizable = False
+
+    page.add(
+        Row(
+            [
+                ft.WindowDragArea(
+                    ft.Container(padding=20, bgcolor=ft.colors.WHITE), expand=True),
+                ft.IconButton(ft.icons.ZOOM_IN, on_click=lambda _: page.window_to_front()),
+                ft.IconButton(ft.icons.CLOSE, on_click=lambda _: page.window_close())
+            ]
         )
     )
+
+    page.add(
+        Row(
+            controls=[Text(value='Hello, world!', size=40)],
+            alignment=ft.MainAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER
+        )
+    )
+    page.update()
+
 
 
 ft.app(target=main,

@@ -1,5 +1,6 @@
 import random
 import ip_calculator as ipc
+import json
 
 
 class IP_tree_Calculator:
@@ -30,23 +31,41 @@ class IP_tree_Calculator:
     def __init__(self):
         self.nodes = None
 
-        self.degrees = [2 ** x for x in range(12, 1, -1)]
+        self.degrees = [4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4]  # [2 ** x for x in range(12, 1, -1)]
+        self.max_of_nodes = [4094, 2046, 1022, 510, 254, 126, 62, 30, 14, 6, 2]  # [x - 2 for x in self.degrees]
 
     def node_input(self):
-        nodes = input().split(', ')
+        self.nodes = input().split(', ')
         try:
-            nodes = list(map(int, nodes))
+            self.nodes = list(map(int, self.nodes))
         except ValueError:
-            raise ValueError(f'Invalid input: {nodes}')
+            return 'Invalid input: non-int type detected;\nPlease try again'
+        else:
+            self.nodes = list(map(int, self.nodes))
 
-        nodes.sort()
+        self.nodes.sort()
+        unic_nodes = list(set(self.nodes))
 
-        for i in range(len(nodes)):
-            if nodes[i] > self.degrees[i] - 2:
-                raise ValueError(f"Node {nodes[i]} is out of range")
+        dict_nodes = {}
+
+        for node in self.nodes:
+            for i in range(len(self.degrees)):
+                if (node <= self.max_of_nodes[i]) and (node >= self.max_of_nodes[i+1]):
+                    if self.degrees[i] not in dict_nodes.keys():
+                        dict_nodes[self.degrees[i]] = [node]
+                    else:
+                        dict_nodes[self.degrees[i]].append(node)
+                    break
+
+        if (nodes_sum := sum(self.nodes)) > (correct_sum := (4094 - 2 * len(unic_nodes))):
+            return (f"Invalid input: nodes sum "
+                    f"({nodes_sum if nodes_sum <= 9999 else str(nodes_sum)[:5] + '...'}) > "
+                    f"{correct_sum}';\nPlease try again")
+
+        return dict_nodes
 
     def main(self):
-        self.node_input()
+        print(self.node_input())
 
 
 # c1 = ipc.IP_Calculator()
