@@ -44,6 +44,7 @@ def main(page: ft.Page) -> None:
 
 
 
-ft.app(target=main,
-       assets_dir='resources'
-       )
+if __name__ == '__main__':
+    ft.app(target=main,
+           assets_dir='resources'
+           )

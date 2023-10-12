@@ -57,12 +57,18 @@ class IP_tree_Calculator:
                         dict_nodes[self.degrees[i]].append(node)
                     break
 
+        nodes_sum = sum(self.nodes)
+        for number in self.max_of_nodes:
+            if number >= nodes_sum:
+                max_node = number
+                break
+
         if (nodes_sum := sum(self.nodes)) > (correct_sum := (4094 - 2 * len(unic_nodes))):
             return (f"Invalid input: nodes sum "
-                    f"({nodes_sum if nodes_sum <= 9999 else str(nodes_sum)[:5] + '...'}) > "
-                    f"{correct_sum}';\nPlease try again")
+                    f"({nodes_sum if nodes_sum <= 99999 else str(nodes_sum)[:5]+'...'}) > "
+                    f"{correct_sum};\nPlease try again")
 
-        return dict_nodes
+        return dict_nodes, max_node
 
     def main(self):
         print(self.node_input())
