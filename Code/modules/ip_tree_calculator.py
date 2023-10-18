@@ -40,7 +40,7 @@ class IP_tree_Calculator:
             if node < 2:
                 invalid_nodes.append(node)
         if invalid_nodes:
-            return f'Node(s) {invalid_nodes} < 2\nPlease try again'
+            return f'Node(s) {invalid_nodes} < 2;\nPlease try again'
         else:
             del invalid_nodes
 
@@ -62,7 +62,7 @@ class IP_tree_Calculator:
         # True -> return 'Error'
         # False -> OK
         if dict_nodes == {}:
-            return f'Nodes ({self.nodes}) > 4094\nPlease try again'
+            return f'Nodes ({self.nodes}) > 4094;\nPlease try again'
 
         # проверка на наличие узлов, которые не были добавлены в словарь
         # True -> return 'Error'
@@ -70,7 +70,7 @@ class IP_tree_Calculator:
         dict_nodes_list = []
         [dict_nodes_list.extend(x) for x in list(dict_nodes.values())]
         if len(self.nodes) > len(dict_nodes_list):
-            return f'Node(s) {set(self.nodes) - set(dict_nodes_list)} > 4096\nPlease try again'
+            return f'Node(s) {set(self.nodes) - set(dict_nodes_list)} > 4094;\nPlease try again'
 
         # сумма введенных узлов
         nodes_sum = sum(self.nodes)
@@ -82,7 +82,7 @@ class IP_tree_Calculator:
         # True -> return 'Error'
         # False -> OK
         if nodes_sum > correct_sum:
-            return f'Nodes sum ({nodes_sum}) > {correct_sum}\nSo maybe you \nPlease try again'
+            return f'Nodes sum ({nodes_sum}) > {correct_sum};\nPlease try again'
 
         # поиск максимальной подсети для дерева
         max_subnet = 0
@@ -91,7 +91,7 @@ class IP_tree_Calculator:
                 max_subnet = number
                 break
         if max_subnet == 0:
-            return f'Nodes sum ({nodes_sum:e}) > {self.max_of_nodes[0]}\nPlease try again'
+            return f'Nodes sum ({nodes_sum:e}) > {self.max_of_nodes[0]};\nPlease try again'
 
         # Минимальная подсеть в дереве
         min_subnet = min(list(dict_nodes.keys()))
