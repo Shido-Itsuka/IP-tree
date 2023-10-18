@@ -4,32 +4,11 @@ import json
 
 
 class IP_tree_Calculator:
-    subnets = {
-        4096: [[0, None], [1, None]],
-
-        2048: [[0, None], [1, None]],
-
-        1024: [[0, None], [1, None]],
-
-        512: [[0, None], [1, None]],
-
-        256: [[0, None], [1, None]],
-
-        128: [[0, None], [1, None]],
-
-        64: [[0, None], [1, None]],
-
-        32: [[0, None], [1, None]],
-
-        16: [[0, None], [1, None]],
-
-        8: [[0, None], [1, None]],
-
-        4: [[0, None], [1, None]]
-    }
+    """ IP tree calculator"""
 
     def __init__(self):
         self.nodes = None
+        self.dict_nodes = {}
 
         self.degrees = [4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4]  # [2 ** x for x in range(12, 1, -1)]
         self.max_of_nodes = [4094, 2046, 1022, 510, 254, 126, 62, 30, 14, 6, 2]  # [x - 2 for x in self.degrees]
@@ -106,28 +85,48 @@ class IP_tree_Calculator:
             return f'Nodes sum ({nodes_sum}) > {correct_sum}\nSo maybe you \nPlease try again'
 
         # поиск максимальной подсети для дерева
-        max_node = 0
+        max_subnet = 0
         for number in reversed(self.degrees):
             if number-2 >= nodes_sum:
-                max_node = number
+                max_subnet = number
                 break
-        if max_node == 0:
+        if max_subnet == 0:
             return f'Nodes sum ({nodes_sum:e}) > {self.max_of_nodes[0]}\nPlease try again'
 
-        return dict_nodes, max_node, correct_sum, nodes_sum
+        # Минимальная подсеть в дереве
+        min_subnet = min(list(dict_nodes.keys()))
+
+        self.dict_nodes = dict_nodes
+        return dict_nodes, max_subnet, min_subnet, correct_sum, nodes_sum
+
+    def tree_constructor(self, dict_nodes, max_subnet, min_subnet):
+
+        tree = {}
+
+        return tree
+
+    def node_distribution(self):
+        pass
 
     def main(self):
         out = self.node_input()
-
+        flag = False
         # если вернется tuple, то его элементы выведутся через строку
         if type(out) is tuple:
-            print(out[0], '',  # json.dumps(out[0], indent=2)
+
+            print((out[0]), '',  # json.dumps(out[0], indent=2)
                   f'Максимальная подсеть в дереве: {out[1]}',
-                  f'Максимальная сумма всех узлов: {out[2]}',
-                  f'Текущая сумма узлов: {out[3]}',
-                  *out[4:], sep='\n')
+                  f'Минимальная подсеть в дереве: {out[2]}',
+                  f'Максимальная сумма всех узлов: {out[3]}',
+                  f'Текущая сумма узлов: {out[4]}',
+                  *out[5:], sep='\n', end=f'\n{79 * "-"}\n')
+            flag = True
         else:
             print(out)
+
+        if flag:
+            tree_func_out = self.tree_constructor(out[0:1], out[1:2], out[2:3])
+            print(tree_func_out, '', sep='\n')
 
 
 # c1 = ipc.IP_Calculator()
