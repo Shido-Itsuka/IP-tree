@@ -162,6 +162,4 @@ cython_debug/
 # User-specific stuff
 .idea
 
-!/test.py
-!/test 2.py
 !/Code/temp.py
