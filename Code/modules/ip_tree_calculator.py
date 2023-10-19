@@ -51,7 +51,7 @@ class IP_tree_Calculator:
         # словарь на выходе может содержать избыточное число узлов, проверка на валидность расположена ниже
         for node in self.nodes:
             for i in range(len(self.degrees)):
-                if (node <= self.max_of_nodes[i]) and (node > self.max_of_nodes[i+1]):
+                if (node <= self.max_of_nodes[i]) and (node > self.max_of_nodes[i + 1]):
                     if self.degrees[i] not in dict_nodes.keys():
                         dict_nodes[self.degrees[i]] = [node]
                     else:
@@ -87,7 +87,7 @@ class IP_tree_Calculator:
         # поиск максимальной подсети для дерева
         max_subnet = 0
         for number in reversed(self.degrees):
-            if number-2 >= nodes_sum:
+            if number - 2 >= nodes_sum:
                 max_subnet = number
                 break
         if max_subnet == 0:
@@ -99,9 +99,27 @@ class IP_tree_Calculator:
         self.dict_nodes = dict_nodes
         return dict_nodes, max_subnet, min_subnet, correct_sum, nodes_sum
 
-    def tree_constructor(self, dict_nodes, max_subnet, min_subnet):
+    # Рекурсивная функция для создания словаря
+    def create_nested_dict(self, subnets, count):
+        if count == 0:
+            return {}
+        next_subnet = subnets[1:]
+        nested_dict = {
+            subnets[0]: (
+                self.create_nested_dict(next_subnet, count - 1),
+                self.create_nested_dict(next_subnet, count - 1))
+        }
 
-        tree = {}
+        return nested_dict
+
+    def tree_constructor(self, dict_nodes, max_subnet, min_subnet):
+        subnets = list(self.degrees[self.degrees.index(max_subnet):self.degrees.index(min_subnet) + 1])
+
+        tree = {
+            subnets[0]: (
+                self.create_nested_dict(subnets[1:], len(subnets) - 1),
+                self.create_nested_dict(subnets[1:], len(subnets) - 1))
+        }
 
         return tree
 
@@ -125,8 +143,8 @@ class IP_tree_Calculator:
             print(out)
 
         if flag:
-            tree_func_out = self.tree_constructor(out[0:1], out[1:2], out[2:3])
-            print(tree_func_out, '', sep='\n')
+            tree_func_out = self.tree_constructor(*out[0:3])
+            print(json.dumps(tree_func_out, indent=4), '', sep='\n')
 
 
 # c1 = ipc.IP_Calculator()
