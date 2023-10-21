@@ -113,6 +113,7 @@ class IP_tree_Calculator:
         return nested_dict
 
     def tree_constructor(self, dict_nodes, max_subnet, min_subnet):
+        # [max:min] => [int, int...]; P.S. Example: [4096, 2048, 1024]
         subnets = list(self.degrees[self.degrees.index(max_subnet):self.degrees.index(min_subnet) + 1])
 
         tree = {
