@@ -1,49 +1,170 @@
 import flet as ft
-from flet import TextField, Checkbox, ElevatedButton, Text, Row, Column
+from flet import TextField, Checkbox, ElevatedButton, Text, Row, Column, Container, Stack
 from flet_core.control import Control
 
 
+def change_wallpaper(e):
+    pass
+
+
+body = Container(
+    Stack([
+        ft.Image(
+            src='images/bgpic4.jpg'
+        ),
+        Container(
+            Row(
+                controls=[
+                    Container(
+                        Row(
+                            controls=[ft.IconButton(icon=ft.icons.WALLPAPER,
+                                                    tooltip='Смена обоев',
+                                                    icon_size=30,
+                                                    on_click=change_wallpaper(1)
+                                                    )
+                                      ],
+                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=62.5,
+                        height=60,
+                        border_radius=10,
+                        blur=ft.Blur(10, 12, ft.BlurTileMode.MIRROR),
+                        border=ft.border.all(1),
+                        alignment=ft.alignment.center,
+                        ),
+                    Container(
+                        Row(
+                            controls=[ft.IconButton(icon=ft.icons.SETTINGS,
+                                                    tooltip='Настройки',
+                                                    icon_size=30,
+                                                    ),
+                                      ft.IconButton(icon=ft.icons.QUESTION_MARK,
+                                                    tooltip='Помощь',
+                                                    icon_size=30,
+                                                    ),
+                                      ],
+                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=125,
+                        height=60,
+                        border_radius=10,
+                        blur=ft.Blur(10, 12, ft.BlurTileMode.MIRROR),
+                        border=ft.border.all(1),
+                        alignment=ft.alignment.center,
+
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+            alignment=ft.alignment.top_right,
+            margin=ft.padding.all(15)
+        ),
+        Container(
+            Container(
+                Row(
+                    controls=[
+                        ElevatedButton(
+                            "IP-Calc",
+                            style=ft.ButtonStyle(
+                                shape=ft.RoundedRectangleBorder(radius=5)
+                            ),
+                            scale=2
+                        ),
+                        ElevatedButton(
+                            "IP-Tree",
+                            style=ft.ButtonStyle(
+                                shape=ft.RoundedRectangleBorder(radius=5)
+                            ),
+                            scale=2
+                        )
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER
+                ),
+                width=500,
+                height=150,
+                border_radius=10,
+                blur=ft.Blur(10, 12, ft.BlurTileMode.MIRROR),
+                border=ft.border.all(1),
+                alignment=ft.alignment.center
+            ),
+            alignment=ft.alignment.top_center,
+            margin=ft.margin.only(top=350),
+        )
+
+    ]),
+    alignment=ft.alignment.center,
+
+)
+
+
 def main(page: ft.Page) -> None:
-    page.fonts = {
-        'Raleway': '/fonts/Raleway-Regular'
-    }
-
     page.title = 'IP-tree'
+    page.theme = ft.Theme(color_scheme_seed='#5a189a',
+                          color_scheme=ft.ColorScheme(
 
-    page.theme_mode = ft.ThemeMode.DARK
-    page.theme = ft.Theme(font_family='Raleway')
+                          ))
+    page.padding = 0
 
     page.window_center()
 
-    page.window_width = 800
-    page.window_height = 500
+    page.window_maximized = True
 
-    page.window_title_bar_hidden = True
-    page.window_title_bar_buttons_hidden = True
+    page.vertical_alignment = 'center'
+    page.horizontal_alignment = 'center'
+
+    page.window_title_bar_hidden = False
+    page.window_title_bar_buttons_hidden = False
     page.window_resizable = False
 
-    page.add(
-        Row(
-            [
-                ft.WindowDragArea(
-                    ft.Container(padding=20, bgcolor=ft.colors.WHITE), expand=True),
-                ft.IconButton(ft.icons.ZOOM_IN, on_click=lambda _: page.window_to_front()),
-                ft.IconButton(ft.icons.CLOSE, on_click=lambda _: page.window_close())
-            ]
-        )
+    def window_event(e):
+        if e.data == "close":
+            page.dialog = confirm_dialog
+            confirm_dialog.open = True
+            page.update()
+
+    page.window_prevent_close = True
+    page.on_window_event = window_event
+
+    def yes_click(e):
+        page.window_destroy()
+
+    def no_click(e):
+        confirm_dialog.open = False
+        page.update()
+
+    confirm_dialog = ft.AlertDialog(
+        shape=ft.RoundedRectangleBorder(radius=10),
+        modal=True,
+        title=ft.Text("Подтвердите Выход"),
+        content=ft.Text("Вы уверены, что хотите выйти?"),
+        actions=[
+            ft.ElevatedButton("Да",
+                              on_click=yes_click,
+                              style=ft.ButtonStyle(
+                                  shape=ft.RoundedRectangleBorder(radius=10)
+                              ),
+                              ),
+            ft.OutlinedButton("Нет",
+                              on_click=no_click,
+                              style=ft.ButtonStyle(
+                                  shape=ft.RoundedRectangleBorder(radius=10)
+                              ),
+                              ),
+        ],
+        actions_alignment=ft.MainAxisAlignment.END
     )
 
     page.add(
-        Row(
-            controls=[Text(value='Hello, world!', size=40)],
-            alignment=ft.MainAxisAlignment.CENTER,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER
-        )
+        body
     )
+
     page.update()
 
 
 if __name__ == '__main__':
     ft.app(target=main,
-           assets_dir='resources'
+           assets_dir='../assets'
            )
