@@ -1,10 +1,13 @@
 import flet as ft
 from flet import TextField, Checkbox, ElevatedButton, Text, Row, Column, Container, Stack
 from flet_core.control import Control
+import os
 
 
-def change_wallpaper(e):
-    pass
+def change_background(e):
+    filenames = os.listdir(os.path.join('..', 'assets', 'images'))
+
+    e.data += 1
 
 
 body = Container(
@@ -20,7 +23,8 @@ body = Container(
                             controls=[ft.IconButton(icon=ft.icons.WALLPAPER,
                                                     tooltip='Смена обоев',
                                                     icon_size=30,
-                                                    on_click=change_wallpaper(1)
+                                                    on_click=change_background,
+                                                    data=0
                                                     )
                                       ],
                             alignment=ft.MainAxisAlignment.SPACE_EVENLY,
