@@ -2,13 +2,42 @@ import flet as ft
 
 
 def main(page: ft.Page):
-    def on_hover(e):
-        e.control.bgcolor = "blue" if e.data == "true" else "red"
-        e.control.update()
+    page.title = "Routes Example"
 
-    page.add(
-        ft.Container(width=100, height=100, bgcolor="red", ink=False, on_hover=on_hover)
-    )
+    page.window_center()
+
+    def route_change(route):
+        page.views.clear()
+        page.views.append(
+            ft.View(
+                "/",
+                [
+                    ft.AppBar(title=ft.Text("Flet app"), bgcolor=ft.colors.SURFACE_VARIANT),
+                    ft.ElevatedButton("Visit Store", on_click=lambda _: page.go("/store")),
+                ],
+            )
+        )
+        if page.route == "/store":
+            page.views.append(
+                ft.View(
+                    "/store",
+                    [
+                        ft.AppBar(title=ft.Text("Store"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.ElevatedButton("Go Home", on_click=lambda _: page.go("/")),
+                    ],
+                )
+            )
+            page.title = 'Store'
+        page.update()
+
+    def view_pop(view):
+        page.views.pop()
+        top_view = page.views[-1]
+        page.go(top_view.route)
+
+    page.on_route_change = route_change
+    page.on_view_pop = view_pop
+    page.go(page.route)
 
 
 ft.app(target=main)
