@@ -4,106 +4,6 @@ from flet_core.control import Control
 import os
 
 
-def change_background(e):
-    filenames = os.listdir(os.path.join('..', 'assets', 'images'))
-
-    e.data += 1
-
-
-body = Container(
-    Stack([
-        ft.Image(
-            src='images/bgpic4.jpg'
-        ),
-        Container(
-            Row(
-                controls=[
-                    Container(
-                        Row(
-                            controls=[ft.IconButton(icon=ft.icons.WALLPAPER,
-                                                    tooltip='Смена обоев',
-                                                    icon_size=30,
-                                                    on_click=change_background,
-                                                    data=0
-                                                    )
-                                      ],
-                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER
-                        ),
-                        width=62.5,
-                        height=60,
-                        border_radius=10,
-                        blur=ft.Blur(10, 12, ft.BlurTileMode.MIRROR),
-                        border=ft.border.all(1),
-                        alignment=ft.alignment.center,
-                        ),
-                    Container(
-                        Row(
-                            controls=[ft.IconButton(icon=ft.icons.SETTINGS,
-                                                    tooltip='Настройки',
-                                                    icon_size=30,
-                                                    ),
-                                      ft.IconButton(icon=ft.icons.QUESTION_MARK,
-                                                    tooltip='Помощь',
-                                                    icon_size=30,
-                                                    ),
-                                      ],
-                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER
-                        ),
-                        width=125,
-                        height=60,
-                        border_radius=10,
-                        blur=ft.Blur(10, 12, ft.BlurTileMode.MIRROR),
-                        border=ft.border.all(1),
-                        alignment=ft.alignment.center,
-
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            ),
-            alignment=ft.alignment.top_right,
-            margin=ft.padding.all(15)
-        ),
-        Container(
-            Container(
-                Row(
-                    controls=[
-                        ElevatedButton(
-                            "IP-Calc",
-                            style=ft.ButtonStyle(
-                                shape=ft.RoundedRectangleBorder(radius=5)
-                            ),
-                            scale=2
-                        ),
-                        ElevatedButton(
-                            "IP-Tree",
-                            style=ft.ButtonStyle(
-                                shape=ft.RoundedRectangleBorder(radius=5)
-                            ),
-                            scale=2
-                        )
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER
-                ),
-                width=500,
-                height=150,
-                border_radius=10,
-                blur=ft.Blur(10, 12, ft.BlurTileMode.MIRROR),
-                border=ft.border.all(1),
-                alignment=ft.alignment.center
-            ),
-            alignment=ft.alignment.top_center,
-            margin=ft.margin.only(top=350),
-        )
-
-    ]),
-    alignment=ft.alignment.center,
-
-)
-
-
 def main(page: ft.Page) -> None:
     page.title = 'IP-tree'
     page.theme = ft.Theme(color_scheme_seed='#5a189a',
@@ -161,10 +61,132 @@ def main(page: ft.Page) -> None:
         actions_alignment=ft.MainAxisAlignment.END
     )
 
+    def change_background(e):
+        filenames = os.listdir(os.path.join('..', 'assets', 'images'))
+        background.src = 'images/' + filenames[background_button.data]
+        if background_button.data == len(filenames) - 1:
+            background_button.data = 0
+        else:
+            background_button.data += 1
+        page.update(background)
+
+    body = Container(
+        Stack([
+            background := ft.Image(
+                src='images/bgpic4.png'
+            ),
+            Container(
+                Row(
+                    controls=[
+                        Container(
+                            Row(
+                                controls=[background_button := ft.IconButton(icon=ft.icons.WALLPAPER,
+                                                                             tooltip='Смена обоев',
+                                                                             icon_size=30,
+                                                                             on_click=change_background,
+                                                                             data=0
+                                                                             )
+                                          ],
+                                alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER
+                            ),
+                            width=62.5,
+                            height=60,
+                            border_radius=10,
+                            blur=ft.Blur(10, 12, ft.BlurTileMode.MIRROR),
+                            border=ft.border.all(1),
+                            alignment=ft.alignment.center,
+                        ),
+                        Container(
+                            Row(
+                                controls=[ft.IconButton(icon=ft.icons.SETTINGS,
+                                                        tooltip='Настройки',
+                                                        icon_size=30,
+                                                        ),
+                                          ft.IconButton(icon=ft.icons.QUESTION_MARK,
+                                                        tooltip='Помощь',
+                                                        icon_size=30,
+                                                        ),
+                                          ],
+                                alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER
+                            ),
+                            width=125,
+                            height=60,
+                            border_radius=10,
+                            blur=ft.Blur(10, 12, ft.BlurTileMode.MIRROR),
+                            border=ft.border.all(1),
+                            alignment=ft.alignment.center,
+
+                        )
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                alignment=ft.alignment.top_right,
+                margin=ft.padding.all(15)
+            ),
+            Container(
+                Container(
+                    Row(
+                        controls=[
+                            ElevatedButton(
+                                "IP-Calc",
+                                style=ft.ButtonStyle(
+                                    shape=ft.RoundedRectangleBorder(radius=5)
+                                ),
+                                scale=2
+                            ),
+                            ElevatedButton(
+                                "IP-Tree",
+                                style=ft.ButtonStyle(
+                                    shape=ft.RoundedRectangleBorder(radius=5)
+                                ),
+                                scale=2
+                            )
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER
+                    ),
+                    width=500,
+                    height=150,
+                    border_radius=10,
+                    blur=ft.Blur(10, 12, ft.BlurTileMode.MIRROR),
+                    border=ft.border.all(1),
+                    alignment=ft.alignment.center
+                ),
+                alignment=ft.alignment.top_center,
+                margin=ft.margin.only(top=434),
+            )
+
+        ]),
+        alignment=ft.alignment.center,
+
+    )
+
     page.add(
         body
     )
+    page.update()
 
+
+def ipcalc(page: ft.Page) -> None:
+    page.title = 'IP-Calculator'
+    page.theme = ft.Theme(color_scheme_seed='#5a189a')
+
+    page.padding = 0
+
+    page.window_center()
+
+    page.window_maximized = True
+
+    page.vertical_alignment = 'center'
+    page.horizontal_alignment = 'center'
+
+    page.window_title_bar_hidden = False
+    page.window_title_bar_buttons_hidden = False
+    page.window_resizable = False
+
+    page.add()
     page.update()
 
 
