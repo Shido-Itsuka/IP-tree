@@ -155,7 +155,7 @@ def main(page: ft.Page) -> None:
                     alignment=ft.alignment.center
                 ),
                 alignment=ft.alignment.top_center,
-                margin=ft.margin.only(top=434),
+                margin=ft.margin.only(top=375),  # 434
             )
 
         ]),
