@@ -3,7 +3,7 @@ import ip_calculator as ipc
 import json
 
 
-class IP_tree_Calculator:
+class IP_Tree_Calculator:
     """ IP tree calculator"""
 
     def __init__(self):
@@ -51,12 +51,20 @@ class IP_tree_Calculator:
         # словарь на выходе может содержать избыточное число узлов, проверка на валидность расположена ниже
         for node in self.nodes:
             for i in range(len(self.degrees)):
-                if (node <= self.max_of_nodes[i]) and (node > self.max_of_nodes[i + 1]):
-                    if self.degrees[i] not in dict_nodes.keys():
-                        dict_nodes[self.degrees[i]] = [node]
-                    else:
-                        dict_nodes[self.degrees[i]].append(node)
-                    break
+                if node > self.max_of_nodes[-1]:  # Нужно, чтобы избежать ошибки <IndexError: list index out of range>
+                    if (node <= self.max_of_nodes[i]) and (node > self.max_of_nodes[i + 1]):
+                        if self.degrees[i] not in dict_nodes.keys():
+                            dict_nodes[self.degrees[i]] = [node]
+                        else:
+                            dict_nodes[self.degrees[i]].append(node)
+                        break
+                else:  # Распределение узлов из диапазона [2:6] по подсети
+                    if (node < self.max_of_nodes[-2]) and (node >= self.max_of_nodes[-1]):
+                        if self.degrees[-1] not in dict_nodes.keys():
+                            dict_nodes[self.degrees[-1]] = [node]
+                        else:
+                            dict_nodes[self.degrees[-1]].append(node)
+                        break
 
         # проверка на отсутствие узлов в словаре
         # True -> return 'Error'
@@ -112,6 +120,7 @@ class IP_tree_Calculator:
 
         return nested_dict
 
+    # Создание дерева
     def tree_constructor(self, dict_nodes, max_subnet, min_subnet):
         # [max:min] => [int, int...]; P.S. Example: [4096, 2048, 1024]
         subnets = list(self.degrees[self.degrees.index(max_subnet):self.degrees.index(min_subnet) + 1])
@@ -124,6 +133,7 @@ class IP_tree_Calculator:
 
         return tree
 
+    # Распределение подсетей по узлам
     def node_distribution(self):
         pass
 
@@ -134,10 +144,10 @@ class IP_tree_Calculator:
         if type(out) is tuple:
 
             print((out[0]), '',  # json.dumps(out[0], indent=2)
-                  f'Максимальная подсеть в дереве: {out[1]}',
-                  f'Минимальная подсеть в дереве: {out[2]}',
-                  f'Максимальная сумма всех узлов: {out[3]}',
-                  f'Текущая сумма узлов: {out[4]}',
+                  f'Максимальная подсеть в дереве:           {out[1]}',
+                  f'Минимальная подсеть в дереве:            {out[2]}',
+                  f'Максимально допустимая сумма всех узлов: {out[3]}',
+                  f'Текущая сумма узлов:                     {out[4]}',
                   *out[5:], sep='\n', end=f'\n{79 * "-"}\n')
             flag = True
         else:
@@ -150,5 +160,5 @@ class IP_tree_Calculator:
 
 # c1 = ipc.IP_Calculator()
 if __name__ == "__main__":
-    ip_tree_1 = IP_tree_Calculator()
+    ip_tree_1 = IP_Tree_Calculator()
     ip_tree_1.main()
