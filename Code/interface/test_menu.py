@@ -17,6 +17,7 @@ def main(page: ft.Page):
                 ],
             )
         )
+        page.title = 'Home'
         if page.route == "/store":
             page.views.append(
                 ft.View(
