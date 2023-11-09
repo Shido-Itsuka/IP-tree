@@ -17,6 +17,10 @@ class IP_Tree_Calculator:
         self.max_amount_of_nodes = {4096: 1, 2048: 2, 1024: 4, 512: 8, 256: 16, 128: 32, 64: 64, 32: 128, 16: 256,
                                     8: 512, 4: 1024}
 
+        # максимально возможное число узлов на подсети
+        self.max_of_nodes_dict = {4096: 4094, 2048: 2046, 1024: 1022, 512: 510, 256: 254, 128: 126, 64: 62, 32: 30,
+                                  16: 14, 8: 6, 4: 2}
+
     def node_input(self):
         self.nodes = input().split(', ')  # ввод узлов через запятую
 
@@ -84,13 +88,32 @@ class IP_Tree_Calculator:
         nodes_sum = sum(self.nodes)
 
         # максимально возможная сумма узлов
-        correct_sum = 4096 - (self.max_amount_of_nodes.get((min(list(dict_nodes.keys())))) * 2)
+        # correct_sum = 4096 - (self.max_amount_of_nodes.get((min(list(dict_nodes.keys())))) * 2)
 
+        # проверка на превышение числа возможных подсетей с узлами в родительской подсети
+        # True -> return 'Error'
+        # False -> OK
+        # Example: 1024: [1000, 1000, 1000, 1000, 1000] => True -> return 'Error'
+        for k, v in dict_nodes.items():
+            if self.max_amount_of_nodes.get(k) < len(v):
+                return (f'Amount of nodes ({len(v)}) for subnet ({k}) > '
+                        f'Max amount of nodes ({self.max_amount_of_nodes.get(k)}) for subnet ({k});\nPlease try again')
+
+        # проверка на превышение максимально возможного числа узлов на подсети
+        # True -> return 'Error'
+        # False -> OK
+        # Example: 1024: [1023] => True -> return 'Error'
+        for k, v in dict_nodes.items():
+            for i in v:
+                if i > self.max_of_nodes_dict.get(k):
+                    return f'Node(s) {v} on subnet {k} > {self.max_of_nodes_dict.get(k)};\nPlease try again'
+
+        # !!! ДОЛЖНО БЫТЬ УДАЛЕНО ВСЛЕДСТВИЕ НЕНАДОБНОСТИ !!!
         # проверка суммы узлов
         # True -> return 'Error'
         # False -> OK
-        if nodes_sum > correct_sum:
-            return f'Nodes sum ({nodes_sum}) > {correct_sum};\nPlease try again'
+        # if nodes_sum > correct_sum:
+        #     return f'Nodes sum ({nodes_sum}) > {correct_sum};\nPlease try again'
 
         # поиск максимальной подсети для дерева
         max_subnet = 0
@@ -105,7 +128,7 @@ class IP_Tree_Calculator:
         min_subnet = min(list(dict_nodes.keys()))
 
         self.dict_nodes = dict_nodes
-        return dict_nodes, max_subnet, min_subnet, correct_sum, nodes_sum
+        return dict_nodes, max_subnet, min_subnet, nodes_sum
 
     # Рекурсивная функция для создания словаря
     def create_nested_dict(self, subnets, count):
@@ -146,9 +169,8 @@ class IP_Tree_Calculator:
             print((out[0]), '',  # json.dumps(out[0], indent=2)
                   f'Максимальная подсеть в дереве:           {out[1]}',
                   f'Минимальная подсеть в дереве:            {out[2]}',
-                  f'Максимально допустимая сумма всех узлов: {out[3]}',
-                  f'Текущая сумма узлов:                     {out[4]}',
-                  *out[5:], sep='\n', end=f'\n{79 * "-"}\n')
+                  f'Текущая сумма узлов:                     {out[3]}',
+                  *out[4:], sep='\n', end=f'\n{79 * "-"}\n')
             flag = True
         else:
             print(out)
