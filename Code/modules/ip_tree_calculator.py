@@ -1,6 +1,7 @@
 import random
 import ip_calculator as ipc
 import json
+from collections import OrderedDict
 
 
 class IP_Tree_Calculator:
@@ -76,6 +77,8 @@ class IP_Tree_Calculator:
         if dict_nodes == {}:
             return f'Nodes ({self.nodes}) > 4094;\nPlease try again'
 
+        dict_nodes = OrderedDict(dict_nodes)
+
         # проверка на наличие узлов, которые не были добавлены в словарь
         # True -> return 'Error'
         # False -> OK
@@ -107,6 +110,16 @@ class IP_Tree_Calculator:
             for i in v:
                 if i > self.max_of_nodes_dict.get(k):
                     return f'Node(s) {v} on subnet {k} > {self.max_of_nodes_dict.get(k)};\nPlease try again'
+
+        # проверка на количество подсетей в родительской подсети
+        # True -> return 'Error'
+        # False -> OK
+        # Example: 1024: [1022], 2048: [1023, 1023] => True -> return 'Error'
+        reversed_dict = OrderedDict(sorted(dict_nodes.items(), reverse=True))
+        k = 0
+        for k, v in reversed_dict.items():
+
+            num_of_subnets = len(v)
 
         # !!! ДОЛЖНО БЫТЬ УДАЛЕНО ВСЛЕДСТВИЕ НЕНАДОБНОСТИ !!!
         # проверка суммы узлов
@@ -166,7 +179,7 @@ class IP_Tree_Calculator:
         # если вернется tuple, то его элементы выведутся через строку
         if type(out) is tuple:
 
-            print((out[0]), '',  # json.dumps(out[0], indent=2)
+            print(dict(out[0]), '',  # json.dumps(out[0], indent=2)
                   f'Максимальная подсеть в дереве:           {out[1]}',
                   f'Минимальная подсеть в дереве:            {out[2]}',
                   f'Текущая сумма узлов:                     {out[3]}',
