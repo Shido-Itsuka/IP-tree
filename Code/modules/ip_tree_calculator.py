@@ -14,7 +14,7 @@ class IP_Tree_Calculator:
         self.degrees = [4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4]  # [2 ** x for x in range(12, 1, -1)]
         self.max_of_nodes = [4094, 2046, 1022, 510, 254, 126, 62, 30, 14, 6, 2]  # [x - 2 for x in self.degrees]
 
-        # максимальное число возможных узлов в подсети
+        # максимальное число возможных подсетей с распределенными узлами на них в подсети
         self.max_amount_of_nodes = {4096: 1, 2048: 2, 1024: 4, 512: 8, 256: 16, 128: 32, 64: 64, 32: 128, 16: 256,
                                     8: 512, 4: 1024}
 
@@ -111,22 +111,13 @@ class IP_Tree_Calculator:
                 if i > self.max_of_nodes_dict.get(k):
                     return f'Node(s) {v} on subnet {k} > {self.max_of_nodes_dict.get(k)};\nPlease try again'
 
-        # проверка на количество подсетей в родительской подсети
-        # True -> return 'Error'
-        # False -> OK
-        # Example: 1024: [1022], 2048: [1023, 1023] => True -> return 'Error'
-        reversed_dict = OrderedDict(sorted(dict_nodes.items(), reverse=True))
-        k = 0
-        for k, v in reversed_dict.items():
-
-            num_of_subnets = len(v)
-
         # !!! ДОЛЖНО БЫТЬ УДАЛЕНО ВСЛЕДСТВИЕ НЕНАДОБНОСТИ !!!
         # проверка суммы узлов
         # True -> return 'Error'
         # False -> OK
         # if nodes_sum > correct_sum:
         #     return f'Nodes sum ({nodes_sum}) > {correct_sum};\nPlease try again'
+        # ^______________________________________________________________________^
 
         # поиск максимальной подсети для дерева
         max_subnet = 0
@@ -136,6 +127,18 @@ class IP_Tree_Calculator:
                 break
         if max_subnet == 0:
             return f'Nodes sum ({nodes_sum:e}) > {self.max_of_nodes[0]};\nPlease try again'
+
+        # проверка на количество подсетей в родительской подсети
+        # True -> return 'Error'
+        # False -> OK
+        # Example: 1024: [1022], 2048: [1023, 1023] => True -> return 'Error'
+        # Пояснение: Макс. подсеть - 4096; на обе 2048 подсети распределяются узлы 1023 и 1023
+        # остается подсеть 1024 и 1022 узла, которые распределяются на нее. Так как уже заняты обе 2048 подсети,
+        # то 1024 существовать в данном случае просто не может => должна выводиться ошибка.
+        reversed_dict = OrderedDict(sorted(dict_nodes.items(), reverse=True))
+        i = 0
+        for k, v in reversed_dict.items():
+            num_of_subnets = len(v)
 
         # Минимальная подсеть в дереве
         min_subnet = min(list(dict_nodes.keys()))
