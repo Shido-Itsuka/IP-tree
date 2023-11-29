@@ -5,6 +5,11 @@ from flet_core.control import Control
 
 theme = ft.Theme(color_scheme_seed='#5a189a')
 
+
+def clear(e):
+    pass
+
+
 body = Row(
     [
 
@@ -42,7 +47,7 @@ body = Row(
                         padding=ft.padding.symmetric(horizontal=40)
                     ),
 
-                    TextField(
+                    IP_input := TextField(
                         label='IP-адрес',
                         hint_text='127.0.0.1',
                         helper_text='Введите IP-адрес',
@@ -52,7 +57,7 @@ body = Row(
 
                     ),
 
-                    Dropdown(
+                    Mask_input := Dropdown(
                         label='Префикс/Маска',
                         hint_text='Выберите префикс/маску',
                         options=[
@@ -90,7 +95,8 @@ body = Row(
                             ft.dropdown.Option("31 - 255.255.255.254"),
                             ft.dropdown.Option("32 - 255.255.255.255")
 
-                        ]
+                        ],
+                        text_size=26,
                     ),
 
                     # Кнопка очистить + подсчитать
@@ -103,7 +109,8 @@ body = Row(
                                         shape=ft.RoundedRectangleBorder(radius=5)
                                     ),
                                     scale=1.5,
-                                    icon=ft.icons.DELETE
+                                    icon=ft.icons.DELETE,
+                                    on_click=clear
                                 ),
 
                                 ft.OutlinedButton(
