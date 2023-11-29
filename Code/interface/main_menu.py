@@ -3,6 +3,9 @@ from flet import TextField, Checkbox, ElevatedButton, Text, Row, Column, Contain
 from flet_core.control import Control
 import os
 
+from ip_calc_menu import _view_ as ipcalc_view
+from ip_tree_menu import _view_ as iptree_view
+
 
 def main(page: ft.Page) -> None:
     page.title = 'IP-tree'
@@ -22,6 +25,8 @@ def main(page: ft.Page) -> None:
     page.window_title_bar_hidden = False
     page.window_title_bar_buttons_hidden = False
     page.window_resizable = False
+
+    # -----------------------------------------------------------------
 
     def window_event(e):
         if e.data == "close":
@@ -60,6 +65,8 @@ def main(page: ft.Page) -> None:
         ],
         actions_alignment=ft.MainAxisAlignment.END
     )
+
+    # -----------------------------------------------------------------
 
     def change_background(e):
         filenames = os.listdir(os.path.join('..', 'assets', 'images'))
@@ -134,14 +141,16 @@ def main(page: ft.Page) -> None:
                                 style=ft.ButtonStyle(
                                     shape=ft.RoundedRectangleBorder(radius=5)
                                 ),
-                                scale=2
+                                scale=2,
+                                on_click=lambda _: page.go("/ipcalc")
                             ),
                             ElevatedButton(
                                 "IP-Tree",
                                 style=ft.ButtonStyle(
                                     shape=ft.RoundedRectangleBorder(radius=5)
                                 ),
-                                scale=2
+                                scale=2,
+                                on_click=lambda _: page.go("/iptree")
                             )
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_AROUND,
@@ -168,26 +177,37 @@ def main(page: ft.Page) -> None:
     )
     page.update()
 
+    def route_change(route):
+        page.views.clear()
+        page.views.append(
+            ft.View(
+                "/",
+                [
+                    body
+                ],
+                padding=0
+            )
+        )
+        page.title = 'Main Menu'
 
-def ipcalc(page: ft.Page) -> None:
-    page.title = 'IP-Calculator'
-    page.theme = ft.Theme(color_scheme_seed='#5a189a')
+        if page.route == "/ipcalc":
+            page.views.append(ipcalc_view())
+            page.title = 'IP Calculator'
 
-    page.padding = 0
+        if page.route == "/iptree":
+            page.views.append(iptree_view())
+            page.title = 'IP Tree Calculator'
 
-    page.window_center()
+        page.update()
 
-    page.window_maximized = True
+    def view_pop(view):
+        page.views.pop()
+        top_view = page.views[-1]
+        page.go(top_view.route)
 
-    page.vertical_alignment = 'center'
-    page.horizontal_alignment = 'center'
-
-    page.window_title_bar_hidden = False
-    page.window_title_bar_buttons_hidden = False
-    page.window_resizable = False
-
-    page.add()
-    page.update()
+    page.on_route_change = route_change
+    page.on_view_pop = view_pop
+    page.go(page.route)
 
 
 if __name__ == '__main__':
