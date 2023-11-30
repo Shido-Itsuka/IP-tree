@@ -193,6 +193,7 @@ def main(page: ft.Page) -> None:
         if page.route == "/ipcalc":
             page.views.append(ipcalc_view())
             page.title = 'IP Calculator'
+            page.update()
 
         if page.route == "/iptree":
             page.views.append(iptree_view())
