@@ -11,6 +11,8 @@ def main(page: ft.Page) -> None:
     page.title = 'IP-tree'
     page.theme = ft.Theme(color_scheme_seed='#5a189a',
                           color_scheme=ft.ColorScheme(
+                              background='#0f0f0f',
+                              primary_container='#272727'
 
                           ))
     page.padding = 0
@@ -191,9 +193,9 @@ def main(page: ft.Page) -> None:
         page.title = 'Main Menu'
 
         if page.route == "/ipcalc":
-            page.views.append(ipcalc_view())
+            page.views.append(ipcalc_view()),
             page.title = 'IP Calculator'
-            page.update()
+        page.update()
 
         if page.route == "/iptree":
             page.views.append(iptree_view())
