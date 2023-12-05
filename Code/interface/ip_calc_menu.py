@@ -1,31 +1,58 @@
 import flet as ft
 from flet import TextField, Dropdown, ElevatedButton, Text, Row, Column, Container, Stack, View
-from flet_core import View
+from flet_core import View, ControlEvent
 import sys
 
 sys.path.append('../')
-from modules.ip_calculator import IP_Calculator
+# noinspection PyUnresolvedReferences
+from modules.ip_calculator_module import IP_Calculator
+
+theme = ft.Theme(color_scheme_seed='#5a189a',
+                 color_scheme=ft.ColorScheme(
+                     background='#0f0f0f',
+                     primary_container='#272727'
+
+                 ))
 
 
-class IP_Calculator_module(IP_Calculator):
-
-    def __init__(self):
-        super().__init__()
-
-
-theme = ft.Theme(color_scheme_seed='#5a189a')
+def validate(e: ControlEvent) -> None:
+    if all([IP_input.value, Mask_input.value]):
+        calc_button.disabled = False
+    else:
+        calc_button.disabled = True
+    calc_button.update()
 
 
 def clear(e):
     IP_input.value = ""
+    IP_input.error_text = ""
     IP_input.update()
+
     Mask_input.value = ""
     Mask_input.update()
+
     IP_input.focus()
+    calc_button.disabled = True
+    calc_button.update()
 
 
 def calculate(e):
-    IP_Calculator_module()
+    try:
+        IP_Calculator(IP_input.value, int(Mask_input.value)).main()
+    except ValueError as e:
+        print(e)
+        IP_input.error_text = e
+        IP_input.update()
+    else:
+        IP_input.error_text = ""
+        IP_input.update()
+
+
+def error_clear(e: ControlEvent) -> None:
+    if IP_input.error_text:
+        if IP_input.value != error_ip:
+            IP_input.error_text = ""
+            IP_input.update()
 
 
 body = Row(
@@ -75,7 +102,9 @@ body = Row(
                             allow=True,
                             regex_string=r"^[0-9\.]*$",
                             replacement_string='',
-                        )
+                        ),
+                        border_color='#717171',
+                        focused_border_color='#dbb8ff',
 
                     ),
 
@@ -119,6 +148,8 @@ body = Row(
 
                         ],
                         text_size=22,
+                        border_color='#717171',
+                        focused_border_color='#dbb8ff',
 
                     ),
 
@@ -136,14 +167,15 @@ body = Row(
                                     on_click=clear
                                 ),
 
-                                ft.OutlinedButton(
+                                calc_button := ft.OutlinedButton(
                                     "Подсчитать",
                                     style=ft.ButtonStyle(
                                         shape=ft.RoundedRectangleBorder(radius=5)
                                     ),
                                     scale=1.5,
                                     icon=ft.icons.CHECK,
-                                    on_click=calculate
+                                    on_click=calculate,
+                                    disabled=True
                                 )
                             ],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN
@@ -173,8 +205,12 @@ body = Row(
 
     ],
     expand=True,
-    spacing=30
+    spacing=30,
+
 )
+
+IP_input.on_change = validate
+Mask_input.on_change = validate
 
 
 def _view_() -> View:
