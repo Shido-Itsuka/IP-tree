@@ -60,8 +60,9 @@ def clear(e):
 def calculate(e):
     try:
         out = IP_Calculator(IP_input.value, int(Mask_input.value)).main()
+        print('\n\n', '-'*55, sep='')
         [print(*x, sep=' | ', end='\n') for x in out]
-        print('-'*50, end='\n\n')
+        print('-'*55, end='\n\n')
         IP_cell.text = out[0][0]
         IP_cell_bin.text = out[0][1]
         Prefix_cell.text = out[1][0]
