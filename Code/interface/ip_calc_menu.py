@@ -25,6 +25,26 @@ def validate(e: ControlEvent) -> None:
 
 
 def clear(e):
+    IP_cell.text = ""
+    IP_cell_bin.text = ""
+    Prefix_cell.text = ""
+    Prefix_cell_bin.text = ""
+    Netmask_cell.text = ""
+    Netmask_cell_bin.text = ""
+    Wildcard_cell.text = ""
+    Wildcard_cell_bin.text = ""
+    Network_cell.text = ""
+    Network_cell_bin.text = ""
+    Broadcast_cell.text = ""
+    Broadcast_cell_bin.text = ""
+    Hostmin_cell.text = ""
+    Hostmin_cell_bin.text = ""
+    Hostmax_cell.text = ""
+    Hostmax_cell_bin.text = ""
+    Hosts_cell.text = ""
+    Hosts_cell_bin.text = ""
+    out_table.update()
+
     IP_input.value = ""
     IP_input.error_text = ""
     IP_input.update()
@@ -40,7 +60,29 @@ def clear(e):
 def calculate(e):
     try:
         out = IP_Calculator(IP_input.value, int(Mask_input.value)).main()
-        print(*out)
+        [print(*x, sep=' | ', end='\n') for x in out]
+        print('-'*50, end='\n\n')
+        IP_cell.text = out[0][0]
+        IP_cell_bin.text = out[0][1]
+        Prefix_cell.text = out[1][0]
+        Prefix_cell_bin.text = out[1][1]
+        Netmask_cell.text = out[2][0]
+        Netmask_cell_bin.text = out[2][1]
+        Wildcard_cell.text = out[3][0]
+        Wildcard_cell_bin.text = out[3][1]
+        Network_cell.text = out[4][0]
+        Network_cell_bin.text = out[4][1]
+        Broadcast_cell.text = out[5][0]
+        Broadcast_cell_bin.text = out[5][1]
+        Hostmin_cell.text = out[6][0]
+        Hostmin_cell_bin.text = out[6][1]
+        Hostmax_cell.text = out[7][0]
+        Hostmax_cell_bin.text = out[7][1]
+        Hosts_cell.text = out[8][0]
+        Hosts_cell_bin.text = out[8][1]
+
+        out_table.update()
+
     except ValueError as e:
         print(e)
         IP_input.error_text = e
@@ -57,12 +99,36 @@ def error_clear(e: ControlEvent) -> None:
             IP_input.update()
 
 
-def copy_cell_value(e: ControlEvent) -> None:
-    def ppp(p: ft.Page):
-        p.set_clipboard(e.control.text)
-        p.update()
+def copy_to_clipboard(p: ft.Page, out):
+    p.set_clipboard(out)
+    p.update()
 
-    print(e.control.text)
+
+def copy_cell_value(e: ControlEvent) -> None:
+    if len(str(e.control.text)) > 0:
+        copy_to_clipboard(e.page, str(e.control.text))
+        print(f"COPIED: {e.control.text}")
+    else:
+        print("EMPTY")
+
+
+def text_button_style(theme: ft.Page.theme_mode, mode: int) -> dict[str, any]:
+    if mode == 1:
+        return {
+            "style": ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(),
+                color="#e9b8ff",
+            ),
+            "on_click": copy_cell_value,
+        }
+    elif mode == 2:
+        return {
+            "style": ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(),
+                color="#ceffb8",
+            ),
+            "on_click": copy_cell_value
+        }
 
 
 body = Row(
@@ -115,7 +181,7 @@ body = Row(
                         ),
                         border_color=ft.colors.WHITE54,
                         focused_border_color='#dbb8ff',
-
+                        on_change=validate
                     ),
 
                     Mask_input := Dropdown(
@@ -160,7 +226,7 @@ body = Row(
                         text_size=22,
                         border_color=ft.colors.WHITE54,
                         focused_border_color='#dbb8ff',
-
+                        on_change=validate
                     ),
 
                     # Кнопка очистить + подсчитать
@@ -206,38 +272,138 @@ body = Row(
         Container(
             Column(
                 controls=[
-                    DataTable(
+                    out_table := DataTable(
                         columns=[
-                            DataColumn(Text("Параметр")),
-                            DataColumn(Text("Десятичное значение")),
-                            DataColumn(Text("Двоичное значение")),
+                            DataColumn(Text(
+                                "Параметр",
+                                weight=ft.FontWeight.BOLD
+                            )),
+                            DataColumn(Text(
+                                "Десятичное значение",
+                                weight=ft.FontWeight.BOLD
+                            )),
+                            DataColumn(Text(
+                                "Двоичное значение",
+                                weight=ft.FontWeight.BOLD
+                            )),
                         ],
                         rows=[
                             DataRow(
                                 cells=[
                                     DataCell(Text("IP-адрес")),
-                                    IP_cell := DataCell(TextButton(
-                                        "ipipip",
-                                        on_click=copy_cell_value
-                                    )),
-                                    IP_cell_bin := DataCell(TextButton(
+                                    DataCell(IP_cell := TextButton(
                                         "",
-                                        on_click=copy_cell_value
+                                        **text_button_style(theme, 1),
+
+                                    ),),
+                                    DataCell(IP_cell_bin := TextButton(
+                                        "",
+                                        **text_button_style(theme, 2)
                                     )),
                                 ],
                             ),
                             DataRow(
                                 cells=[
-                                    DataCell(ft.Text("Jack")),
-                                    DataCell(ft.Text("Brown")),
-                                    DataCell(ft.Text("19")),
+                                    DataCell(Text("Префикс")),
+                                    DataCell(Prefix_cell := TextButton(
+                                        "",
+                                        **text_button_style(theme, 1)
+                                    )),
+                                    DataCell(Prefix_cell_bin := TextButton(
+                                        "",
+                                        **text_button_style(theme, 2)
+                                    )),
                                 ],
                             ),
                             DataRow(
                                 cells=[
-                                    DataCell(ft.Text("Alice")),
-                                    DataCell(ft.Text("Wong")),
-                                    DataCell(ft.Text("25")),
+                                    DataCell(Text("Маска")),
+                                    DataCell(Netmask_cell := TextButton(
+                                        "",
+                                        **text_button_style(theme, 1)
+                                    )),
+                                    DataCell(Netmask_cell_bin := TextButton(
+                                        "",
+                                        **text_button_style(theme, 2)
+                                    )),
+                                ],
+                            ),
+                            DataRow(
+                                cells=[
+                                    DataCell(Text("Обратная маска")),
+                                    DataCell(Wildcard_cell := TextButton(
+                                        "",
+                                        **text_button_style(theme, 1)
+                                    )),
+                                    DataCell(Wildcard_cell_bin := TextButton(
+                                        "",
+                                        **text_button_style(theme, 2)
+                                    )),
+                                ],
+                            ),
+                            DataRow(
+                                cells=[
+                                    DataCell(Text("Номер сети")),
+                                    DataCell(Network_cell := TextButton(
+                                        "",
+                                        **text_button_style(theme, 1)
+                                    )),
+                                    DataCell(Network_cell_bin := TextButton(
+                                        "",
+                                        **text_button_style(theme, 2)
+                                    )),
+                                ],
+                            ),
+                            DataRow(
+                                cells=[
+                                    DataCell(Text("Широковещательный IP-адрес")),
+                                    DataCell(Broadcast_cell := TextButton(
+                                        "",
+                                        **text_button_style(theme, 1)
+                                    )),
+                                    DataCell(Broadcast_cell_bin := TextButton(
+                                        "",
+                                        **text_button_style(theme, 2)
+                                    )),
+                                ],
+                            ),
+                            DataRow(
+                                cells=[
+                                    DataCell(Text("IP-адрес первого хоста")),
+                                    DataCell(Hostmin_cell := TextButton(
+                                        "",
+                                        **text_button_style(theme, 1)
+                                    )),
+                                    DataCell(Hostmin_cell_bin := TextButton(
+                                        "",
+                                        **text_button_style(theme, 2)
+                                    )),
+                                ],
+                            ),
+                            DataRow(
+                                cells=[
+                                    DataCell(Text("IP-адрес последнего хоста")),
+                                    DataCell(Hostmax_cell := TextButton(
+                                        "",
+                                        **text_button_style(theme, 1)
+                                    )),
+                                    DataCell(Hostmax_cell_bin := TextButton(
+                                        "",
+                                        **text_button_style(theme, 2)
+                                    )),
+                                ],
+                            ),
+                            DataRow(
+                                cells=[
+                                    DataCell(Text("Количество хостов")),
+                                    DataCell(Hosts_cell := TextButton(
+                                        "",
+                                        **text_button_style(theme, 1)
+                                    )),
+                                    DataCell(Hosts_cell_bin := TextButton(
+                                        "",
+                                        **text_button_style(theme, 2)
+                                    )),
                                 ],
                             ),
                         ],
@@ -248,6 +414,7 @@ body = Row(
                         border_radius=5,
                         vertical_lines=ft.border.BorderSide(2, ft.colors.WHITE54),
                         horizontal_lines=ft.border.BorderSide(2, ft.colors.WHITE54),
+                        scale=1.3
                     ),
 
                 ],
@@ -266,9 +433,6 @@ body = Row(
     spacing=30,
 
 )
-
-IP_input.on_change = validate
-Mask_input.on_change = validate
 
 
 def _view_() -> View:
