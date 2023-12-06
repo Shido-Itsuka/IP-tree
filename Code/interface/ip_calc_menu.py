@@ -95,9 +95,8 @@ def calculate(e):
 
 def error_clear(e: ControlEvent) -> None:
     if IP_input.error_text:
-        if IP_input.value != error_ip:
-            IP_input.error_text = ""
-            IP_input.update()
+        IP_input.error_text = ""
+        IP_input.update()
 
 
 def copy_to_clipboard(p: ft.Page, out):
