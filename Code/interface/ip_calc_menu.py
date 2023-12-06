@@ -1,5 +1,6 @@
 import flet as ft
-from flet import TextField, Dropdown, ElevatedButton, Text, Row, Column, Container, Stack, View
+from flet import (TextField, Dropdown, ElevatedButton, Text, Row, Column, Container, Stack, View, TextButton, DataCell,
+                  DataTable, DataRow, DataColumn)
 from flet_core import View, ControlEvent
 import sys
 
@@ -38,7 +39,8 @@ def clear(e):
 
 def calculate(e):
     try:
-        IP_Calculator(IP_input.value, int(Mask_input.value)).main()
+        out = IP_Calculator(IP_input.value, int(Mask_input.value)).main()
+        print(*out)
     except ValueError as e:
         print(e)
         IP_input.error_text = e
@@ -53,6 +55,14 @@ def error_clear(e: ControlEvent) -> None:
         if IP_input.value != error_ip:
             IP_input.error_text = ""
             IP_input.update()
+
+
+def copy_cell_value(e: ControlEvent) -> None:
+    def ppp(p: ft.Page):
+        p.set_clipboard(e.control.text)
+        p.update()
+
+    print(e.control.text)
 
 
 body = Row(
@@ -103,7 +113,7 @@ body = Row(
                             regex_string=r"^[0-9\.]*$",
                             replacement_string='',
                         ),
-                        border_color='#717171',
+                        border_color=ft.colors.WHITE54,
                         focused_border_color='#dbb8ff',
 
                     ),
@@ -148,7 +158,7 @@ body = Row(
 
                         ],
                         text_size=22,
-                        border_color='#717171',
+                        border_color=ft.colors.WHITE54,
                         focused_border_color='#dbb8ff',
 
                     ),
@@ -195,12 +205,60 @@ body = Row(
         # Контейнер справа
         Container(
             Column(
+                controls=[
+                    DataTable(
+                        columns=[
+                            DataColumn(Text("Параметр")),
+                            DataColumn(Text("Десятичное значение")),
+                            DataColumn(Text("Двоичное значение")),
+                        ],
+                        rows=[
+                            DataRow(
+                                cells=[
+                                    DataCell(Text("IP-адрес")),
+                                    IP_cell := DataCell(TextButton(
+                                        "ipipip",
+                                        on_click=copy_cell_value
+                                    )),
+                                    IP_cell_bin := DataCell(TextButton(
+                                        "",
+                                        on_click=copy_cell_value
+                                    )),
+                                ],
+                            ),
+                            DataRow(
+                                cells=[
+                                    DataCell(ft.Text("Jack")),
+                                    DataCell(ft.Text("Brown")),
+                                    DataCell(ft.Text("19")),
+                                ],
+                            ),
+                            DataRow(
+                                cells=[
+                                    DataCell(ft.Text("Alice")),
+                                    DataCell(ft.Text("Wong")),
+                                    DataCell(ft.Text("25")),
+                                ],
+                            ),
+                        ],
+                        border=ft.border.all(
+                            width=3,
+                            color=ft.colors.WHITE54
+                        ),
+                        border_radius=5,
+                        vertical_lines=ft.border.BorderSide(2, ft.colors.WHITE54),
+                        horizontal_lines=ft.border.BorderSide(2, ft.colors.WHITE54),
+                    ),
 
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER
             ),
             expand=True,
             bgcolor=ft.colors.BLACK45,
             border_radius=10,
-            padding=60
+            padding=60,
+            alignment=ft.alignment.center
         )
 
     ],
@@ -219,5 +277,6 @@ def _view_() -> View:
         controls=[
             body
         ],
-        padding=30
+        padding=30,
+        # bgcolor=ft.colors.BLACK45
     )
