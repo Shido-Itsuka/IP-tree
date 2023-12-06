@@ -1,5 +1,4 @@
 class IP_Calculator:
-
     # A matrix consists of lists.
     # The mask prefix is on the 1st place, and the mask itself is on the 2nd.
     masks = [
@@ -155,29 +154,19 @@ class IP_Calculator:
         self.bin_wildcard = self.ip_bin(self.wildcard)
         self.bin_network = self.ip_bin(self.network)
         self.bin_broadcast = self.ip_bin(self.broadcast)
-        self.output()
+        return self.output()
 
     def output(self):
-        print(66 * '-',
-              f'\nIP: {self.ip_address}'
-              f'\nПрефикс: {self.prefix}'
-              f'\nМаска: {self.netmask}'
-              f'\nОбратная маска: {self.wildcard}'
-              f'\nНомер сети: {self.network}'
-              f'\nШироковещательный IP-адрес: {self.broadcast}'
-              f'\nIP адрес первого хоста: {self.hostmin}'
-              f'\nIP адрес последнего хоста: {self.hostmax}'
-              f'\nКоличество хостов: {self.hosts}'
-              f'\nIP в бинарном виде: {self.bin_ip_address}'
-              f'\nМаска в бинарном виде: {self.bin_netmask}'
-              f'\nОбратная маска в бинарном виде: {self.bin_wildcard}'
-              f'\nНомер сети в бинарном виде: {self.bin_network}'
-              f'\nШироковещательный IP-адрес в бинарном виде: {self.bin_broadcast}'
-              f'\nIP адрес первого хоста в бинарном виде: {self.bin_hostmin}'
-              f'\nIP адрес последнего хоста в бинарном виде: {self.bin_hostmax}'
-
-
-              f'\n{79 * "-"}')
+        return [[self.ip_address, self.bin_ip_address],  # IP-адрес dec и bin
+                [self.prefix, None],  # префикс
+                [self.netmask, self.bin_netmask],  # Маска dec и bin
+                [self.wildcard, self.bin_wildcard],  # Обратная маска dec и bin
+                [self.network, self.bin_network],  # Номер сети dec и bin
+                [self.broadcast, self.bin_broadcast],  # Широковещательный IP-адрес dec и bin
+                [self.hostmin, self.bin_hostmin],  # IP адрес первого хоста dec и bin
+                [self.hostmax, self.bin_hostmax],  # IP адрес последнего хоста dec и bin
+                [self.hosts, None],  # Количество хостов
+                ]
 
 
 if __name__ == '__main__':
