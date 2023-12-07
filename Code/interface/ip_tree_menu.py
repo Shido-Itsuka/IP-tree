@@ -21,7 +21,7 @@ theme = ft.Theme(color_scheme_seed='#5a189a',
 
 
 def validate(e: ControlEvent) -> None:
-    if all([IP_input.value, Mask_input.value]):
+    if all([IP_input.value, Nodes_input.value]):
         calc_button.disabled = False
     else:
         calc_button.disabled = True
@@ -116,46 +116,12 @@ body = Row(
                         on_change=validate
                     ),
 
-                    Mask_input := Dropdown(
-                        label='Префикс/Маска',
-                        hint_text='Выберите префикс/маску',
-                        options=[
-                            ft.dropdown.Option(0, "0 - 000.000.000.000"),
-                            ft.dropdown.Option(1, "1 - 128.000.000.000"),
-                            ft.dropdown.Option(2, "2 - 192.000.000.000"),
-                            ft.dropdown.Option(3, "3 - 224.000.000.000"),
-                            ft.dropdown.Option(4, "4 - 240.000.000.000"),
-                            ft.dropdown.Option(5, "5 - 248.000.000.000"),
-                            ft.dropdown.Option(6, "6 - 252.000.000.000"),
-                            ft.dropdown.Option(7, "7 - 254.000.000.000"),
-                            ft.dropdown.Option(8, "8 - 255.000.000.000"),
-                            ft.dropdown.Option(9, "9 - 255.128.000.000"),
-                            ft.dropdown.Option(10, "10 - 255.192.000.000"),
-                            ft.dropdown.Option(11, "11 - 255.224.000.000"),
-                            ft.dropdown.Option(12, "12 - 255.240.000.000"),
-                            ft.dropdown.Option(13, "13 - 255.248.000.000"),
-                            ft.dropdown.Option(14, "14 - 255.252.000.000"),
-                            ft.dropdown.Option(15, "15 - 255.254.000.000"),
-                            ft.dropdown.Option(16, "16 - 255.255.000.000"),
-                            ft.dropdown.Option(17, "17 - 255.255.128.000"),
-                            ft.dropdown.Option(18, "18 - 255.255.192.000"),
-                            ft.dropdown.Option(19, "19 - 255.255.224.000"),
-                            ft.dropdown.Option(20, "20 - 255.255.240.000"),
-                            ft.dropdown.Option(21, "21 - 255.255.248.000"),
-                            ft.dropdown.Option(22, "22 - 255.255.252.000"),
-                            ft.dropdown.Option(23, "23 - 255.255.254.000"),
-                            ft.dropdown.Option(24, "24 - 255.255.255.000"),
-                            ft.dropdown.Option(25, "25 - 255.255.255.128"),
-                            ft.dropdown.Option(26, "26 - 255.255.255.192"),
-                            ft.dropdown.Option(27, "27 - 255.255.255.224"),
-                            ft.dropdown.Option(28, "28 - 255.255.255.240"),
-                            ft.dropdown.Option(29, "29 - 255.255.255.248"),
-                            ft.dropdown.Option(30, "30 - 255.255.255.252"),
-                            ft.dropdown.Option(31, "31 - 255.255.255.254"),
-                            ft.dropdown.Option(32, "32 - 255.255.255.255")
-
-                        ],
-                        text_size=22,
+                    Nodes_input := TextField(
+                        label='Введите подсети, разделяя их Enter\'ом',
+                        hint_text='500',
+                        autofocus=True,
+                        text_size=26,
+                        multiline=True,
                         border_color=ft.colors.WHITE54,
                         focused_border_color='#dbb8ff',
                         on_change=validate
@@ -194,7 +160,7 @@ body = Row(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER
             ),
-            width=700,
+            width=600,
             bgcolor=ft.colors.BLACK45,
             border_radius=10,
             padding=60
