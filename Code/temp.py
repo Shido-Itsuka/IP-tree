@@ -1,57 +1,17 @@
-tree = {
-    "4096": [
-        {
-            "2048": [
-                {
-                    "1024": [
-                        {},
-                        {}
-                    ]
-                },
-                {
-                    "1024": [
-                        {},
-                        {}
-                    ]
-                }
-            ]
-        },
-        {
-            "2048": [
-                {
-                    "1024": [
-                        {},
-                        {}
-                    ]
-                },
-                {
-                    "1024": [
-                        {},
-                        {}
-                    ]
-                }
-            ]
-        }
-    ]
-}
+import networkx as nx
+import matplotlib.pyplot as plt
 
+# Создание пустого графа
+G = nx.Graph()
 
-def update_tree(tree, key_path, new_value):
-    if not key_path:
-        return new_value
+# Добавление узлов в граф
+G.add_nodes_from([1, 2, 3, 4, 5, 6])
 
-    current_key = key_path[0]
-    if isinstance(tree, list):
-        index = int(current_key)
-        tree[index] = update_tree(tree[index], key_path[1:], new_value)
-    elif isinstance(tree, dict):
-        tree[current_key] = update_tree(tree[current_key], key_path[1:], new_value)
+# Добавление ребер в граф
+G.add_edges_from([(1, 2), (1, 3), (2, 4), (2, 5), (3, 6)])
 
-    return tree
+# Отрисовка графа
+nx.draw(G, with_labels=True, node_color='lightblue', node_size=1500, font_size=12, font_weight='bold')
 
-
-key_path = ["4096", "0", "2048", "0", "1024", "0"]
-new_value = 1022
-
-updated_tree = update_tree(tree, key_path, new_value)
-print(updated_tree)
+# Отображение графика
+plt.show()
