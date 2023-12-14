@@ -3,6 +3,7 @@ from flet import (TextField, Dropdown, ElevatedButton, Text, Row, Column, Contai
                   DataTable, DataRow, DataColumn)
 from flet_core import View, ControlEvent
 import sys
+import re
 
 sys.path.append('../')
 
@@ -10,7 +11,7 @@ sys.path.append('../')
 from modules.ip_calculator import IP_Calculator
 
 # noinspection PyUnresolvedReferences
-from modules.ip_tree_calculator import IP_Tree_Calculator
+from modules.ip_tree_calculator_module import IP_Tree_Calculator
 
 theme = ft.Theme(color_scheme_seed='#5a189a',
                  color_scheme=ft.ColorScheme(
@@ -28,13 +29,33 @@ def validate(e: ControlEvent) -> None:
     calc_button.update()
 
 
+def filter_nodes_input():
+    if Nodes_input.value:
+        return re.sub(r'^[\d\n]+$', '', Nodes_input.value)
+
+
+nodes_input_str = ""
+
+
+def val_n_filter(e: ControlEvent) -> None:
+    if all([IP_input.value, Nodes_input.value]):
+        calc_button.disabled = False
+    else:
+        calc_button.disabled = True
+    calc_button.update()
+
+    global nodes_input_str
+    nodes_input_str = re.sub(r'^[\d\n]+$', '', Nodes_input.value)
+    # print(Nodes_input.value, nodes_input_str, sep=" | ", end='\n--------\n')
+
+
 def clear(e):
     IP_input.value = ""
     IP_input.error_text = ""
     IP_input.update()
 
-    Mask_input.value = ""
-    Mask_input.update()
+    Nodes_input.value = ""
+    Nodes_input.update()
 
     IP_input.focus()
     calc_button.disabled = True
@@ -43,15 +64,28 @@ def clear(e):
 
 def calculate(e):
     try:
-        out = IP_Calculator(IP_input.value, int(Mask_input.value)).main()
-        print('\n\n', '-'*55, sep='')
-        [print(*x, sep=' | ', end='\n') for x in out]
-        print('-'*55, end='\n\n')
+        out = IP_Tree_Calculator(IP_input.value, Nodes_input.value).main()
 
+    # Ошибка типа вводимых данных
+    except TypeError as e:
+        print(e)
+        if str(e)[-1:] == 'N':
+            Nodes_input.error_text = e
+            Nodes_input.update()
+        else:
+            IP_input.error_text = e
+            IP_input.update()
+
+    # Ошибка о некорректности введенных данных
     except ValueError as e:
         print(e)
-        IP_input.error_text = e
-        IP_input.update()
+        if str(e)[-1:] == 'N':
+            Nodes_input.error_text = e
+            Nodes_input.update()
+        else:
+            IP_input.error_text = e
+            IP_input.update()
+
     else:
         IP_input.error_text = ""
         IP_input.update()
@@ -67,7 +101,7 @@ body = Row(
     [
 
         # Контейнер слева
-        ft.Container(
+        Container(
 
             # Строка с контейнерами
             Column(
@@ -118,13 +152,20 @@ body = Row(
 
                     Nodes_input := TextField(
                         label='Введите подсети, разделяя их Enter\'ом',
-                        hint_text='500',
+                        hint_text=f'500\n200',
                         autofocus=True,
                         text_size=26,
+                        input_filter=ft.InputFilter(
+                            allow=True,
+                            regex_string=r'^[\d\n]+$',
+                            replacement_string=nodes_input_str,
+                        ),
                         multiline=True,
+                        min_lines=6,
+                        max_lines=6,
                         border_color=ft.colors.WHITE54,
                         focused_border_color='#dbb8ff',
-                        on_change=validate
+                        on_change=val_n_filter
                     ),
 
                     # Кнопка очистить + подсчитать
