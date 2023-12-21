@@ -1,0 +1,1 @@
+flet pack main_menu.py --icon "assets\icons\logo.png" --name "ip-tree calculator" --add-data "assets;assets" --product-name "ip_tree_calc" --file-description "IP-tree constructor with IP-calculator" --product-version 0.1.1.0 --file-version 0.1.1.0 --company-name "AEsir Electronics" --copyright "Copyright 2023 AEsir Electronics. All rights reserved."
