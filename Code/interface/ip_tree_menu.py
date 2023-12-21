@@ -2,22 +2,14 @@ import flet as ft
 from flet import (TextField, Dropdown, ElevatedButton, Text, Row, Column, Container, Stack, View, TextButton, DataCell,
                   DataTable, DataRow, DataColumn)
 from flet_core import View, ControlEvent
-import sys
 import re
-
-sys.path.append('../')
-
-# noinspection PyUnresolvedReferences
-from modules.ip_calculator import IP_Calculator
-
-# noinspection PyUnresolvedReferences
+from modules.ip_calculator_module import IP_Calculator
 from modules.ip_tree_calculator_module import IP_Tree_Calculator
 
 theme = ft.Theme(color_scheme_seed='#5a189a',
                  color_scheme=ft.ColorScheme(
                      background='#0f0f0f',
                      primary_container='#272727'
-
                  ))
 
 
@@ -57,6 +49,17 @@ def clear(e):
     Nodes_input.value = ""
     Nodes_input.update()
 
+    out_nodes.value = ""
+    out_nodes.update()
+    out_max_node.value = ""
+    out_max_node.update()
+    out_min_node.value = ""
+    out_min_node.update()
+    out_sum_of_nodes.value = ""
+    out_sum_of_nodes.update()
+    out_tree_structure.value = ""
+    out_tree_structure.update()
+
     IP_input.focus()
     calc_button.disabled = True
     calc_button.update()
@@ -89,6 +92,17 @@ def calculate(e):
     else:
         IP_input.error_text = ""
         IP_input.update()
+        print('\n\n', '-' * 55, out)
+
+        out_nodes.value = f"Подсети и узлы {dict(out[0])}"
+        out_nodes.update()
+        out_max_node.value = f"Максимальная подсеть в дереве: {out[1]}"
+        out_max_node.update()
+        out_min_node.value = f"Минимальная подсеть в дереве: {out[2]}"
+        out_min_node.update()
+        out_sum_of_nodes.value = f"Текущая сумма узлов: {out[3]}"
+        out_sum_of_nodes.update()
+
 
 
 def error_clear(e: ControlEvent) -> None:
@@ -211,10 +225,45 @@ body = Row(
         Container(
             Column(
                 controls=[
+                    out_nodes := Text(
+                        value="",
+                        style=ft.TextThemeStyle.TITLE_MEDIUM,
+                        color=ft.colors.WHITE,
+                        weight=ft.FontWeight.NORMAL,
+                        size=25
+                    ),
+                    out_max_node := Text(
+                        value="",
+                        style=ft.TextThemeStyle.TITLE_MEDIUM,
+                        color=ft.colors.WHITE,
+                        weight=ft.FontWeight.NORMAL,
+                        size=25
+                    ),
+                    out_min_node := Text(
+                        value="",
+                        style=ft.TextThemeStyle.TITLE_MEDIUM,
+                        color=ft.colors.WHITE,
+                        weight=ft.FontWeight.NORMAL,
+                        size=25
+                    ),
 
+                    out_sum_of_nodes := Text(
+                        value="",
+                        style=ft.TextThemeStyle.TITLE_MEDIUM,
+                        color=ft.colors.WHITE,
+                        weight=ft.FontWeight.NORMAL,
+                        size=25
+                    ),
+                    out_tree_structure := Text(
+                        value="",
+                        style=ft.TextThemeStyle.TITLE_MEDIUM,
+                        color=ft.colors.WHITE,
+                        weight=ft.FontWeight.NORMAL,
+                        size=15
+                    ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                alignment=ft.MainAxisAlignment.CENTER
+                alignment=ft.MainAxisAlignment.SPACE_AROUND
             ),
             expand=True,
             bgcolor=ft.colors.BLACK45,
