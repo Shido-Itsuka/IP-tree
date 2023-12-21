@@ -47,6 +47,7 @@ def clear(e):
     IP_input.update()
 
     Nodes_input.value = ""
+    Nodes_input.error_text = ""
     Nodes_input.update()
 
     out_nodes.value = ""
