@@ -71,7 +71,7 @@ def main(page: ft.Page) -> None:
     # -----------------------------------------------------------------
 
     def change_background(e):
-        filenames = os.listdir(os.path.join('..', 'assets', 'images'))
+        filenames = os.listdir(os.path.join('assets', 'images'))
         background.src = 'images/' + filenames[background_button.data]
         if background_button.data == len(filenames) - 1:
             background_button.data = 0
@@ -215,5 +215,5 @@ def main(page: ft.Page) -> None:
 
 if __name__ == '__main__':
     ft.app(target=main,
-           assets_dir='../assets'
+           assets_dir='assets'
            )
